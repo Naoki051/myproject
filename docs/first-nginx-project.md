@@ -1,42 +1,37 @@
-# 🚀 Adicionando o NGINX como Proxy Reverso
+# Integração com NGINX como proxy reverso
 
-Agora que sua aplicação Django está rodando, vamos adicionar o **NGINX**. Ele atuará como um "porteiro" para sua aplicação: receberá o tráfego externo, servirá arquivos estáticos de forma eficiente e repassará as requisições dinâmicas para o Django via **Gunicorn**.
+A aplicação Django já estava funcionando em container. Agora a próxima etapa é colocar o NGINX na frente da aplicação para receber as requisições HTTP e encaminhar para o serviço Django.
 
----
+## Objetivo
 
-## 🛠️ Passo 1: Atualizar dependências e o Django
+- reduzir a exposição direta do Django;
+- centralizar o acesso pela porta 80;
+- preparar o ambiente para produção com melhor organização de tráfego e estáticos.
 
-Primeiro, precisamos de um servidor WSGI robusto (Gunicorn) e configurar o Django para rodar em modo produção.
+## 1. Adicionar Gunicorn
 
-1. **Atualize o `requirements.txt**`:
-Adicione o Gunicorn ao arquivo:
+Arquivo: `requirements.txt`
+
 ```text
 django
 gunicorn
-
 ```
 
+## 2. Ajustar as configurações do Django
 
-2. **Ajuste o `settings.py**`:
-No seu arquivo `config/settings.py`, altere as configurações de segurança para permitir o proxy:
+No arquivo `config/settings.py`, adicionar:
+
 ```python
 DEBUG = False
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
-# Adicione também ao final do arquivo:
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 ```
 
+Isso permite que o Django aceite requisições vindas do proxy do NGINX.
 
+## 3. Criar a configuração do NGINX
 
----
-
-## 📁 Passo 2: Criar a configuração do NGINX
-
-Na raiz do seu projeto `myapp`, crie uma pasta chamada `nginx` e dentro dela um arquivo `default.conf`:
-
-* **`nginx/default.conf`**
+Pasta: `nginx/default.conf`
 
 ```nginx
 server {
@@ -55,16 +50,9 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
-
 ```
 
----
-
-## ⚙️ Passo 3: Atualizar `Dockerfile` e `docker-compose.yml`
-
-Agora, diremos ao Docker para usar o Gunicorn e levantar o NGINX.
-
-* **`Dockerfile`** (Atualizado):
+## 4. Atualizar Dockerfile
 
 ```dockerfile
 FROM python:3.12-slim
@@ -76,12 +64,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Usando Gunicorn em vez de runserver
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
-
 ```
 
-* **`docker-compose.yml`** (Atualizado):
+## 5. Atualizar docker-compose.yml
 
 ```yaml
 services:
@@ -104,21 +90,34 @@ services:
       - .:/app
     depends_on:
       - web
-
 ```
 
----
+## Verificação
 
-## ▶️ Rodando o Projeto com NGINX
-
-Como alteramos a estrutura, reconstrua as imagens e suba os serviços:
+Subir os serviços novamente:
 
 ```bash
 docker compose up --build
-
 ```
 
-### 🌐 Testando
+Testar o acesso direto pelo NGINX:
 
-Agora, o Django não está mais na porta 8000. Acesse diretamente pela porta padrão:
-👉 [http://localhost](http://localhost)
+```bash
+curl -I http://localhost
+```
+
+Ou abrir no navegador:
+
+- http://localhost
+
+Resultado esperado:
+
+- o NGINX responde na porta 80;
+- a aplicação continua acessível sem expor diretamente o Django;
+- a rota principal funciona via proxy.
+
+## Observações
+
+- O NGINX fica responsável pela entrada na aplicação.
+- O Django continua rodando em um container interno, sem ser acessado diretamente no ambiente local.
+- No próximo passo, a aplicação será conectada ao PostgreSQL.

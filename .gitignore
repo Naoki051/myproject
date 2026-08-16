@@ -9,6 +9,7 @@ staticfiles/
 
 # Variáveis de ambiente e segredos
 .env
+envs/
 
 # IDEs e Editores
 .vscode/

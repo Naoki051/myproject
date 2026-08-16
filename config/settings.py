@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -118,3 +119,14 @@ MAILERS = {
 
 # NGINX CONFIG
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', 'meubanco'),
+        'USER': os.environ.get('DB_USER', 'meuusuario'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'suasenha'),
+        'HOST': os.environ.get('DB_HOST', 'db'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
+    }
+}

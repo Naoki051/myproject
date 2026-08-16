@@ -1,56 +1,28 @@
-# Projeto Django com Docker 🐳
+# Configuração inicial do projeto Django com Docker
 
-Guia passo a passo para configurar, subir e executar um projeto Django do zero utilizando containers Docker no seu ambiente de desenvolvimento.
+Este documento registra a primeira etapa da criação do projeto: preparar o ambiente Docker, instalar o Django e inicializar a estrutura base do projeto.
 
----
+## Objetivo
 
-## 🛠️ Pré-requisitos
+Garantir que o projeto consiga subir em containers e que o Django fique disponível para desenvolvimento local.
 
-Certifique-se de ter as seguintes ferramentas instaladas no seu computador:
+## Pré-requisitos
 
-* **Docker Desktop** (com suporte ao comando moderno `docker compose`)
-* **Git**
-* Um editor de código (como o **VS Code**)
+- Docker Desktop instalado
+- Docker Compose disponível
+- Git e editor de código (VS Code recomendado)
 
----
+## 1. Estrutura mínima do projeto
 
-## 📁 Estrutura do Projeto
+Na raiz do projeto, criar os arquivos básicos:
 
-Na raiz do seu projeto, você precisará de apenas três arquivos principais de configuração antes de iniciar o Django:
-
-1. **`requirements.txt`** - Gerenciador de dependências do Python.
-2. **`Dockerfile`** - A receita para construir a imagem do container.
-3. **`docker-compose.yml`** - O orquestrador para subir os serviços.
-
----
-
-## 🚀 Passo a Passo de Instalação
-
-### 1. Criar e clonar a estrutura de pastas
-
-Abra o seu terminal e execute:
-
-```bash
-mkdir Projects
-cd Projects
-mkdir myapp
-cd myapp
-git init
-
-```
-
-### 2. Criar os arquivos de configuração
-
-Crie os arquivos abaixo na raiz da pasta `myapp`:
-
-* **`requirements.txt`**
+### requirements.txt
 
 ```text
 django
-
 ```
 
-* **`Dockerfile`**
+### Dockerfile
 
 ```dockerfile
 FROM python:3.12-slim
@@ -63,10 +35,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-
 ```
 
-* **`docker-compose.yml`**
+### docker-compose.yml
 
 ```yaml
 services:
@@ -77,67 +48,57 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-
 ```
 
----
+## 2. Inicialização do projeto Django
 
-## ⚙️ Inicializando o Projeto Django
-
-Como o ambiente roda dentro do Docker, vamos criar a estrutura base do Django usando um comando temporário:
+Na raiz do projeto, executar:
 
 ```bash
 docker compose run --rm web django-admin startproject config .
-
 ```
 
-*Isso criará a pasta de configurações (`config/`) e o arquivo executável `manage.py` direto na sua pasta local.*
+Esse comando cria a estrutura base do Django com:
 
----
+- `manage.py`
+- pasta `config/`
+- configurações iniciais do projeto
 
-## ▶️ Rodando o Projeto
-
-Para colocar a aplicação no ar, execute:
+## 3. Subir o projeto
 
 ```bash
-docker compose up
-
+docker compose up --build
 ```
 
-### 🌐 Acessando a aplicação
+A aplicação deve ficar acessível em:
 
-Abra o seu navegador e acesse:
-👉 [http://localhost:8000](http://localhost:8000)
+- http://localhost:8000
 
-Você deverá ver a página oficial de boas-vindas do Django!
+## Verificação
 
----
+Abra o navegador e confirme que a página padrão do Django aparece.
 
-## 🛑 Comandos Úteis do Dia a Dia
+Também é possível verificar o estado do container:
 
-* **Subir em segundo plano (modo detached):**
+```bash
+docker compose ps
+```
+
+Se o serviço `web` estiver em execução e a página carregar, a configuração inicial do Django foi concluída com sucesso.
+
+## Comandos úteis
+
 ```bash
 docker compose up -d
-
-```
-
-
-* **Parar os containers:**
-```bash
 docker compose down
-
-```
-
-
-* **Ver logs em tempo real:**
-```bash
 docker compose logs -f
-
-```
-
-
-* **Executar comandos do Django (como migrações):**
-```bash
 docker compose run --rm web python manage.py migrate
-
 ```
+
+## Resultado esperado
+
+- Ambiente Docker funcionando;
+- Projeto Django criado na pasta raiz;
+- Servidor respondendo em localhost:8000.
+
+Este é o ponto de partida para a criação do app, a configuração de URLs e a integração com NGINX e PostgreSQL.
