@@ -108,16 +108,16 @@ class PessoaMembro(models.Model):
         db_table = 'pessoa_membro'
 
 
-class UserComissao(models.Model):
-    class StatusUserComissao(models.TextChoices):
+class PessoaComissao(models.Model):
+    class StatusPessoaComissao(models.TextChoices):
         ATIVO = 'ativo', 'Ativo'
         ENCERRADO = 'encerrado', 'Encerrado'
         AFASTADO = 'afastado', 'Afastado'
 
-    pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE, db_column='fk_pessoa', related_name='comissoes_usuario')
-    departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE, db_column='fk_departamento', related_name='comissoes_usuario')
-    comissao = models.ForeignKey(Comissao, on_delete=models.CASCADE, db_column='fk_comissao', related_name='usuarios')
-    status = models.CharField(max_length=20, choices=StatusUserComissao.choices, default=StatusUserComissao.ATIVO)
+    pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE, db_column='fk_pessoa', related_name='comissoes_pessoa')
+    departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE, db_column='fk_departamento', related_name='comissoes_pessoa')
+    comissao = models.ForeignKey(Comissao, on_delete=models.CASCADE, db_column='fk_comissao', related_name='pessoas')
+    status = models.CharField(max_length=20, choices=StatusPessoaComissao.choices, default=StatusPessoaComissao.ATIVO)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -125,18 +125,18 @@ class UserComissao(models.Model):
         return f"{self.pessoa.nome_completo} - {self.comissao.nome}"
 
     class Meta:
-        db_table = 'user_comissao'
+        db_table = 'pessoa_comissao'
 
 
-class UserComite(models.Model):
-    class StatusUserComite(models.TextChoices):
+class PessoaComite(models.Model):
+    class StatusPessoaComite(models.TextChoices):
         ATIVO = 'ativo', 'Ativo'
         ENCERRADO = 'encerrado', 'Encerrado'
 
-    pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE, db_column='fk_pessoa', related_name='comites_usuario')
-    comite = models.ForeignKey(Comite, on_delete=models.CASCADE, db_column='fk_comite', related_name='usuarios')
+    pessoa = models.ForeignKey(Pessoa, on_delete=models.CASCADE, db_column='fk_pessoa', related_name='comites_pessoa')
+    comite = models.ForeignKey(Comite, on_delete=models.CASCADE, db_column='fk_comite', related_name='pessoas')
     presidente = models.ForeignKey(Pessoa, on_delete=models.SET_NULL, null=True, blank=True, db_column='fk_presidente', related_name='comites_presididos')
-    status = models.CharField(max_length=20, choices=StatusUserComite.choices, default=StatusUserComite.ATIVO)
+    status = models.CharField(max_length=20, choices=StatusPessoaComite.choices, default=StatusPessoaComite.ATIVO)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -144,10 +144,10 @@ class UserComite(models.Model):
         return f"{self.pessoa.nome_completo} - {self.comite.nome}"
 
     class Meta:
-        db_table = 'user_comite'
+        db_table = 'pessoa_comite'
 
 
-class UserCoordenacao(models.Model):
+class PessoaCoordenacao(models.Model):
     presidente = models.ForeignKey(Pessoa, on_delete=models.CASCADE, db_column='fk_presidente', related_name='coordenacoes_presididas')
     vice1 = models.ForeignKey(Pessoa, on_delete=models.CASCADE, db_column='fk_vice1', related_name='coordenacoes_vice1')
     vice2 = models.ForeignKey(Pessoa, on_delete=models.CASCADE, db_column='fk_vice2', related_name='coordenacoes_vice2')
@@ -158,4 +158,4 @@ class UserCoordenacao(models.Model):
         return f"Coordenacao ({self.start_at.year})"
 
     class Meta:
-        db_table = 'user_coordenacao'
+        db_table = 'pessoa_coordenacao'
