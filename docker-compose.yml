@@ -15,7 +15,7 @@ services:
     expose:
       - "8000"
     environment:
-      - DEBUG=False
+      - DEBUG=TRUE
       - ALLOWED_HOSTS=localhost,127.0.0.1
       - DB_HOST=db
       - DB_PORT=5432
@@ -23,6 +23,7 @@ services:
       - envs/postgres.env
     depends_on:
       - db
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --reload
 
   nginx:
     image: nginx:latest

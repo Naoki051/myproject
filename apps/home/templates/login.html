@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+</head>
+<body>
+  <h2>Acessar Conta</h2>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <!-- Erros globais (ex: 'E-mail ou senha incorretos') -->
+    {% if form.non_field_errors %}
+      <div style="color: red; margin-bottom: 1rem;">
+        {% for error in form.non_field_errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- E-mail / Username -->
+    <div style="margin-bottom: 1rem;">
+      <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label><br>
+      {{ form.username }}
+      {% if form.username.errors %}
+        <div style="color: red;">{{ form.username.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <!-- Senha -->
+    <div style="margin-bottom: 1rem;">
+      <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label><br>
+      {{ form.password }}
+      {% if form.password.errors %}
+        <div style="color: red;">{{ form.password.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <button type="submit">Entrar</button>
+  </form>
+
+  <p>Ainda não tem conta? <a href="{% url 'signup' %}">Cadastre-se</a></p>
+  <p><a href="{% url 'home' %}">Voltar para a Home</a></p>
+</body>
+</html>

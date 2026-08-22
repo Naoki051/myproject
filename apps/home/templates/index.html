@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Página Inicial</title>
+</head>
+<body>
+  <h1>Bem-vindo ao Sistema</h1>
+  <p>Escolha uma opção para continuar:</p>
+  
+  <div>
+    <a href="{% url 'login' %}">Entrar (Login)</a> |
+    <a href="{% url 'signup' %}">Cadastre-se (Sign Up)</a>
+  </div>
+</body>
+</html>
